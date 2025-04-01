@@ -2,6 +2,7 @@ package org.example
 
 interface CommandHandler {
     suspend fun HandleGetUser(a: String): String
+    suspend fun HandleGetAllLocalUsers(): String
 }
 
 
@@ -21,5 +22,14 @@ class CommandHandlerImpl : CommandHandler {
         return userInfo.toString()
     }
 
+    override suspend fun HandleGetAllLocalUsers(): String {
+
+        var result: String = ""
+        Dependencies.usersMap.keys.forEach { key ->
+            result += key + "\n"
+        }
+
+        return result
+    }
 
 }
