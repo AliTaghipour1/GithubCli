@@ -3,6 +3,7 @@ package org.example
 const val getUserInfoCommandPrefix = "getUser"
 const val getLocalUsersListCommandPrefix = "getLocalUsersList"
 const val getLocalUserCommandPrefix = "getLocalUser"
+const val getLocalRepoCommandPrefix = "getLocalRepo"
 const val exitCommandPrefix = "exit"
 
 suspend fun main() {
@@ -25,6 +26,11 @@ suspend fun main() {
 
             command.startsWith(getLocalUserCommandPrefix) -> {
                 val result = handler.HandleGetLocalUser(command.removePrefix(getLocalUserCommandPrefix).trim())
+                println("Local User info: $result")
+            }
+
+            command.startsWith(getLocalRepoCommandPrefix) -> {
+                val result = handler.HandleGetLocalRepository(command.removePrefix(getLocalRepoCommandPrefix).trim())
                 println("Local User info: $result")
             }
 

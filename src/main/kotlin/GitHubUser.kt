@@ -7,4 +7,6 @@ data class GitHubUser(
     @SerializedName("name") val name: String,
     @SerializedName("bio") val bio: String,
     @SerializedName("company") val company: String,
+    @SerializedName("repos_url") val reposUrl: String,
+    var publicRepositories: List<GitHubRepository>,
 )
