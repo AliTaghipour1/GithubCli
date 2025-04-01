@@ -6,7 +6,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Dependencies {
-    val usersMap = HashMap<String, String>()
+    val usersMap = HashMap<String, GitHubUser>()
+    val publicRepositories = HashMap<String, GitHubRepository>()
 
     val gson: Gson by lazy {
         GsonBuilder()

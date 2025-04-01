@@ -1,8 +1,9 @@
 package org.example
 
 interface CommandHandler {
-    suspend fun HandleGetUser(a: String): String
-    suspend fun HandleGetLocalUser(a: String): String
+    suspend fun HandleGetUser(username: String): String
+    suspend fun HandleGetLocalUser(username: String): String
+    suspend fun HandleGetLocalRepository(repoName: String): String
     suspend fun HandleGetAllLocalUsers(): String
 }
 
@@ -16,24 +17,38 @@ class CommandHandlerImpl : CommandHandler {
 
         val userData =
             Dependencies.usersMap[username] //Todo: add methods to dependencies instead of passing map directly
-        if (!userData.isNullOrBlank()) return userData
+        if (userData != null) {
+            return userData.toString()
+        }
 
         val userInfo = Dependencies.gitHub.getUserInfo(username)
-        Dependencies.usersMap[username] = userInfo.toString()
+
+        val repositories =
+            Dependencies.gitHub.getUserRepositories(username).filter { repo: GitHubRepository -> !repo.isPrivate }
+
+        userInfo.publicRepositories = repositories
+        Dependencies.usersMap[username] = userInfo
+        for (repository in repositories) {
+            Dependencies.publicRepositories[repository.name] = repository
+        }
         return userInfo.toString()
     }
 
     override suspend fun HandleGetLocalUser(username: String): String {
-        val userData =
-            Dependencies.usersMap[username] //Todo: add methods to dependencies instead of passing map directly
-        if (!userData.isNullOrBlank()) return userData
+        //Todo: add methods to dependencies instead of passing map directly
+        val userData = Dependencies.usersMap[username] ?: return "not found"
+        return userData.toString()
 
-        return "not found"
+    }
+
+    override suspend fun HandleGetLocalRepository(repoName: String): String {
+        val result = Dependencies.publicRepositories[repoName] ?: return "not found"
+        return result.toString()
     }
 
     override suspend fun HandleGetAllLocalUsers(): String {
 
-        var result: String = ""
+        var result = ""
         Dependencies.usersMap.keys.forEach { key ->
             result += key + "\n"
         }
