@@ -4,7 +4,16 @@ const val getUserInfoCommandPrefix = "getUser"
 const val getLocalUsersListCommandPrefix = "getLocalUsersList"
 const val getLocalUserCommandPrefix = "getLocalUser"
 const val getLocalRepoCommandPrefix = "getLocalRepo"
+const val help = "help"
 const val exitCommandPrefix = "exit"
+val commandList = listOf(
+    getUserInfoCommandPrefix,
+    getLocalUsersListCommandPrefix,
+    getLocalUserCommandPrefix,
+    getLocalRepoCommandPrefix,
+    help,
+    exitCommandPrefix
+)
 
 suspend fun main() {
     println("Welcome to my github cli - enter help to see command details")
@@ -38,6 +47,8 @@ suspend fun main() {
                 val result = handler.HandleGetAllLocalUsers()
                 println("Users info: $result")
             }
+
+            command.startsWith(getLocalUsersListCommandPrefix) -> println("Commands: $commandList")
 
             else -> println("You entered: $command")
         }
