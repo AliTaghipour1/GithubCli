@@ -1,5 +1,7 @@
 package org.example
 
+import retrofit2.HttpException
+
 interface CommandHandler {
     suspend fun HandleGetUser(username: String): String
     suspend fun HandleGetLocalUser(username: String): String
@@ -21,7 +23,19 @@ class CommandHandlerImpl : CommandHandler {
             return userData.toString()
         }
 
-        val userInfo = Dependencies.gitHub.getUserInfo(username)
+        val userInfo: GitHubUser?
+        try {
+            userInfo = Dependencies.gitHub.getUserInfo(username)
+        } catch (e: HttpException) {
+            val error = Dependencies.gson.fromJson(
+                e.response()?.errorBody()?.string(),
+                ApiError::class.java
+            )
+            return error.toString()
+        } catch (e: Exception) {
+            return ""
+        }
+
 
         val repositories =
             Dependencies.gitHub.getUserRepositories(username).filter { repo: GitHubRepository -> !repo.isPrivate }
